@@ -1,9 +1,22 @@
 // Requires
 const express = require("express");
 const mongoose = require("mongoose");
+const bodyParser = require('body-parser');
 // Inicializar variables
 const app = express();
-// Escuchar peticiones
+
+//body Parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({extended:false}))
+// parse application/json 
+app.use(bodyParser.json())
+
+/* El body parser toma los datos y lo transforma en un objeto de javascript para que lo podamos usar en cualquier lugar*/
+
+// importar rutas
+const appRoutes = require('./routes/app');
+const usuarioRoutes = require('./routes/usuario');
+const loginRoutes = require('./routes/login');
 
 // Conexión a la base de datos
 
@@ -14,13 +27,13 @@ mongoose.connection.openUri(
     console.log('Base de datos :\x1b[32m%s\x1b[0m', 'online');
   }
 );
-// Ruta son 3 los parametros que se usan en ese callback req, res, next, normalmente en get put update etc no se usa next, sino cuando trabajamos con middlwares
-app.get("/", (req, res) => {
-  res.status(200).json({
-    ok: true,
-    mensaje: "Petición realizada correctamente"
-  });
-});
+
+//Rutas
+// middlwares
+app.use('/usuario', usuarioRoutes);
+app.use('/login', loginRoutes);
+app.use('/', appRoutes);
+
 
 app.listen(3000, () => {
   console.log("Express Server puerto 3000: \x1b[32m%s\x1b[0m", "online");
